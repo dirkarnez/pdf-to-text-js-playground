@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+</head>
+<body>
+    <div id="pageContainer" style="display: inline-block; border: solid 1px black;">
+    <script>
+        const PDF_PATH = "./ctn.pdf";
+        const PAGE_NUMBER = 1;
+        const PAGE_SCALE = 1.5;
+        const SVG_NS = "http://www.w3.org/2000/svg";
+
+        (async function() {
+            if (typeof pdfjsLib === "undefined") {
+                // eslint-disable-next-line no-alert
+                alert("Cannot load pdfjs");
+                return;
+            }
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://mozilla.github.io/pdf.js/build/pdf.worker.js";
+            
+            const loadingTask = pdfjsLib.getDocument({ url: PDF_PATH });
+            const pdfDocument = await loadingTask.promise;
+            const page = await pdfDocument.getPage(PAGE_NUMBER);
+            const viewport = page.getViewport({ scale: PAGE_SCALE });
+            const textContent = await page.getTextContent();
+            document.getElementById("pageContainer").innerText = textContent.items.map(item => item.str).join("");
+            page.cleanup();
+
+        })();
+    </script>
+</body>
+</html>
